@@ -2,10 +2,30 @@ from tkinter import *
 from pytube import YouTube
 from tkinter import filedialog, messagebox
 from pytube import Playlist
-from moviepy.video.io import ffmpeg_tools
+from moviepy.editor import *
 import os
+import re
 
 # functions
+
+
+def download(v_url, path, type_mp3_mp4):
+    yt = YouTube(v_url)
+
+    if type_mp3_mp4 == 1:
+        video = yt.streams.filter(file_extension='mp4').first()
+
+        video_file = VideoFileClip(video.download(path))
+        audio_file = video_file.audio
+        audio_file.write_audiofile(f"{re.findall(r'(.+).mp4', str(video.download(path)))[0]}.mp3")
+        video_file.close()
+        audio_file.close()
+
+        os.remove(str(video.download(path)))
+
+    else:
+        video = yt.streams.get_highest_resolution()
+        video.download(path)
 
 
 def download_path():
@@ -22,24 +42,13 @@ def download_path():
 
 def video_download():
     video_url = url.get()
-    download = saving_path
+    save_path = saving_path
     type_download = check_var.get()
     mp3_or_video = mp3_var.get()
 
     if type_download == 0:
         try:
-            yt = YouTube(video_url)
-
-            if mp3_or_video == 1:
-                video = yt.streams.get_audio_only()
-                video.download(download)
-
-                ffmpeg_tools.ffmpeg_extract_audio(video.download(download), f"{download}/{yt.title}.mp3")
-                os.remove(f"{video.download(download)}")
-
-            else:
-                video = yt.streams.get_highest_resolution()
-                video.download(download)
+            download(video_url, save_path, mp3_or_video)
 
             messagebox.showinfo("Done", "Download complete")
 
@@ -50,11 +59,10 @@ def video_download():
     elif type_download == 1:
         try:
             playlist = Playlist(video_url)
-            download = saving_path
             video_count = 0
             video_downloaded = 0
 
-            f = open(f"{download}/Videos.txt", "w+")
+            f = open(f"{save_path}/Videos.txt", "w+")
             f.truncate(0)
             f.write(f"Video URLs:\n")
             f.close()
@@ -62,23 +70,12 @@ def video_download():
             for video in playlist.video_urls:
                 video_count += 1
                 try:
-                    yt = YouTube(video)
-
-                    if mp3_or_video == 1:
-                        video = yt.streams.get_audio_only()
-                        video.download(download)
-
-                        ffmpeg_tools.ffmpeg_extract_audio(video.download(download), f"{download}/{yt.title}.mp3")
-                        os.remove(f"{video.download(download)}")
-
-                    else:
-                        video = yt.streams.get_highest_resolution()
-                        video.download(download)
+                    download(video, save_path, mp3_or_video)
 
                     video_downloaded += 1
 
                 except Exception as e:
-                    f = open(f"{download}/Videos.txt", "a+")
+                    f = open(f"{save_path}/Videos.txt", "a+")
                     f.write(f"{video}\n")
                     f.close()
 
