@@ -23,6 +23,17 @@ def get_all_tasks():
     return all_tasks
 
 
+def get_task(task):
+    all_tasks = get_all_tasks()
+    selected_task = None
+
+    for name in all_tasks:
+        if task == name['name']:
+            selected_task = name
+
+    return selected_task
+
+
 def edit_task(**kwargs):
     msg_box = messagebox.askquestion("Edit", "Are you sure you want to edit this task?", icon="warning")
     if msg_box == "yes":
@@ -39,8 +50,9 @@ def edit_task(**kwargs):
 
 def edit_task_view(tk, task):
     if task:
+        task = get_task(task)
         clear_view(tk)
-        task = eval(task)
+        task = task
         get_all_tasks()
         index = get_all_tasks().index(task)
 
@@ -103,9 +115,10 @@ def delete_task(task_to_delete):
         msg_box = messagebox.askquestion("Delete", "Are you sure you want to delete this task?", icon="warning")
 
         if msg_box == "yes":
+            task_to_delete = get_task(task_to_delete)
             all_tasks = get_all_tasks()
-            all_tasks.remove(eval(task_to_delete))
-    
+            all_tasks.remove(task_to_delete)
+
             if len(all_tasks) > 0:
                 with open("DB.txt", "w") as f:
                     json.dump(all_tasks, f)
@@ -115,6 +128,46 @@ def delete_task(task_to_delete):
                 open("DB.txt", "w").close()
 
             main_screen(master)
+
+    else:
+        messagebox.showinfo("Error", "Please select a task!")
+
+
+def view_task(tk, task):
+    if task:
+        clear_view(tk)
+        tk.geometry("400x400")
+
+        selected_task = get_task(task)
+        priority = "None"
+        is_completed = "No"
+
+        if selected_task['is_completed']:
+            is_completed = "Yes"
+
+        if selected_task['priority'] == 1:
+            priority = "Low"
+
+        elif selected_task['priority'] == 2:
+            priority = "Medium"
+
+        elif selected_task['priority'] == 3:
+            priority = "High"
+
+        Label(tk, text="Task name:", font="Times 15 bold").grid(row=0, column=0, padx=15, pady=15)
+        Label(tk, text=selected_task['name'], fg="green", font="Times 15").grid(row=0, column=1)
+        Label(tk, text="Due date:", font="Times 15 bold").grid(row=1, column=0, padx=15, pady=15)
+        Label(tk, text=selected_task['date'], fg="green", font="Times 15").grid(row=1, column=1)
+        Label(tk, text="Description:", font="Times 15 bold").grid(row=2, column=0, padx=15, pady=15)
+        text = Text(tk, width=25, height=5)
+        text.insert("1.0", selected_task['description'])
+        text.config(state=DISABLED)
+        text.grid(row=2, column=1)
+        Label(tk, text="Priority:", font="Times 15 bold").grid(row=3, column=0, padx=15, pady=25)
+        Label(tk, text=priority, fg="green", font="Times 15").grid(row=3, column=1)
+        Label(tk, text="Is completed:", font="Times 15 bold").grid(row=4, column=0, padx=15, pady=15)
+        Label(tk, text=is_completed, fg="green", font="Times 15").grid(row=4, column=1)
+        Button(tk, text="Back", bg="black", fg="white", command=lambda: view_tasks(tk)).grid(row=5, column=2, pady=30)
 
     else:
         messagebox.showinfo("Error", "Please select a task!")
@@ -172,18 +225,20 @@ def view_tasks(tk):
             f.close()
 
         clear_view(tk)
-        tk.geometry("600x300")
+        tk.geometry("300x300")
         tk.title("View tasks")
 
-        box = Combobox(tk, width=80)
-        box['values'] = all_tasks
-        box.grid(row=0, column=0)
+        box = Combobox(tk, width=30)
+        box['values'] = [name['name'] for name in all_tasks]
+        box.grid(row=0, column=0, padx=45, pady=25)
 
-        Button(tk, text="Edit task", bg="yellow", command=lambda: edit_task_view(tk, box.get())).grid(row=1,
-                                                                                                      column=1, pady=25)
-        Button(tk, text="Delete task", bg="red", fg="white", command=lambda: delete_task(box.get())).grid(row=2,
-                                                                                                          column=1)
-        Button(tk, text="Cancel", bg="black", fg="white", command=lambda: main_screen(tk)).grid(row=3, column=1,
+        Button(tk, text="View task", bg="green", fg="white", command=lambda: view_task(tk, box.get())).grid(row=1
+                                                                                                            , column=0)
+        Button(tk, text="Edit task", bg="yellow", command=lambda: edit_task_view(tk, box.get())).grid(row=2,
+                                                                                                      column=0, pady=25)
+        Button(tk, text="Delete task", bg="red", fg="white", command=lambda: delete_task(box.get())).grid(row=3,
+                                                                                                          column=0)
+        Button(tk, text="Cancel", bg="black", fg="white", command=lambda: main_screen(tk)).grid(row=4, column=0,
                                                                                                 pady=25)
 
     except Exception as e:
