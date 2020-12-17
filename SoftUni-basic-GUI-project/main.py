@@ -23,6 +23,15 @@ def get_all_tasks():
     return all_tasks
 
 
+def sort_tasks():
+    all_tasks = get_all_tasks()
+
+    all_tasks = sorted(all_tasks, key=lambda x: (x['is_completed'], -x['priority'], x['date']))
+    with open("DB.txt", "w+") as f:
+        json.dump(all_tasks, f)
+        f.close()
+
+
 def get_task(task):
     all_tasks = get_all_tasks()
     selected_task = None
@@ -45,6 +54,7 @@ def edit_task(**kwargs):
             json.dump(all_tasks, f)
             f.close()
 
+        sort_tasks()
         view_tasks(master)
 
 
@@ -127,6 +137,7 @@ def delete_task(task_to_delete):
             else:
                 open("DB.txt", "w").close()
 
+            sort_tasks()
             main_screen(master)
 
     else:
@@ -181,6 +192,7 @@ def create_task(**kwargs):
         json.dump(all_tasks, f)
         f.close()
 
+    sort_tasks()
     main_screen(master)
 
 
