@@ -7,7 +7,7 @@
 >pip install twitchio
 
 # What the bot can do:
->timeouts a user who post link in the char for 60 sec\
+>timeouts a user who post link in chat for 60 sec\
 >!req "osu! map link" - request a osu! map\
 >!clear clears the entire chat [mod needed]\
 >!ban "user" "reason" - bans the user [mod needed]\
