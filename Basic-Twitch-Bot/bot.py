@@ -20,7 +20,7 @@ async def event_ready():
     print("Bot is ready")
     ws = bot._ws
     for channel in CHANNELS:
-        await ws.send_privmsg(channel, "/me is online")   # bot sends a message that he is online
+        await ws.send_privmsg(channel, "/me is online")   # bot sends a message when he comes is online
 
 
 @bot.event
