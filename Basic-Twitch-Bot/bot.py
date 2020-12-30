@@ -92,7 +92,7 @@ async def permit(ctx, user):
 
 
 @bot.command(name="unpermit")
-async def permit(ctx, user):
+async def unpermit(ctx, user):
     if ctx.author.is_mod:
         permit_users.remove(user)
         await ctx.send(f"{user} is no longer permitted to post links")
