@@ -1,1 +1,1 @@
-# Here you will find basic stuffs with python
+# Here you will find basic stuff with python
