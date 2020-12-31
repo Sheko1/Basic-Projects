@@ -16,15 +16,18 @@ bot = commands.Bot(
 
 
 permit_users = []
+message = """"You can grab the bot source code from: 
+https://github.com/Theimpossible1/Basic-Projects/tree/master/Basic-Twitch-Bot, also if you want check out my youtube
+channel https://www.youtube.com/channel/UC7AjvsXfEJY6cC0EkhxEkxg"""   # you can change this whatever you want
 
 
-async def message(ws):
+async def interval_message(ws):
     await sleep(300)
     for channel in CHANNELS:
-        await ws.send_privmsg(channel, f"You can grab the bot source code from: "
-                                       f"https://github.com/Sheko1/Basic-Projects/tree/master/Basic-Twitch-Bot")
+        await ws.send_privmsg(channel, message)
 
-    await message(ws)
+    await interval_message(ws)
+    # sending message every 5 minutes
 
 
 @bot.event
@@ -32,9 +35,9 @@ async def event_ready():
     print("Bot is ready")
     ws = bot._ws
     for channel in CHANNELS:
-        await ws.send_privmsg(channel, "/me is online")   # bot sends a message when he comes is online
+        await ws.send_privmsg(channel, "/me is online")  # bot sends a message when he comes is online
 
-    await message(ws)
+    await interval_message(ws)
 
 
 @bot.event
