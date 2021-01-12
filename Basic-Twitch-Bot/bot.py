@@ -17,7 +17,7 @@ bot = commands.Bot(
 
 permit_users = []
 message = """"You can grab the bot source code from: 
-https://github.com/Theimpossible1/Basic-Projects/tree/master/Basic-Twitch-Bot, also if you want check out my youtube
+https://github.com/Sheko1/Basic-Projects/tree/master/Basic-Twitch-Bot, also if you want check out my youtube
 channel https://www.youtube.com/channel/UC7AjvsXfEJY6cC0EkhxEkxg"""   # you can change this whatever you want
 
 
